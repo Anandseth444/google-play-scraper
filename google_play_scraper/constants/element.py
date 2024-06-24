@@ -240,3 +240,20 @@ class ElementSpecs:
         "developer": ElementSpec(None, [0, 14]),
         "installs": ElementSpec(None, [0, 15]),
     }
+
+    Developer = {
+        "apps": ElementSpec(
+            3,
+            [0, 1, 0, 22, 0],
+            lambda collection: [
+                ElementSpec(None, [0, 0, 0]).extract_content(entry) for entry in collection
+            ],
+        ),
+        "apps2": ElementSpec(
+            3,
+            [0, 1, 0, 21, 0],
+            lambda collection: [
+                ElementSpec(None, [0, 0]).extract_content(entry) for entry in collection
+            ],
+        )
+    }
