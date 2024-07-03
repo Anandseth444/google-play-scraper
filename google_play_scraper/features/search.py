@@ -39,7 +39,7 @@ def search(
 
     try:
         top_result = dataset["ds:4"][0][1][0][23][16]
-    except IndexError:
+    except Exception:
         top_result = None
 
     success = False
