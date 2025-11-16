@@ -12,9 +12,12 @@ MAX_RETRIES = 3
 RATE_LIMIT_DELAY = 5
 
 
-def _urlopen(obj):
+def _urlopen(obj, timeout: int = None) -> str:
     try:
-        resp = urlopen(obj)
+        if timeout:
+            resp = urlopen(obj, timeout=timeout)
+        else:
+            resp = urlopen(obj)
     except HTTPError as e:
         if e.code == 404:
             raise NotFoundError("App not found(404).")
@@ -44,5 +47,5 @@ def post(url: str, data: Union[str, bytes], headers: dict) -> str:
     raise last_exception
 
 
-def get(url: str) -> str:
-    return _urlopen(url)
+def get(url: str, timeout: int = None) -> str:
+    return _urlopen(url, timeout=timeout)
