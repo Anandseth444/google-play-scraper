@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, List, Optional, Union
 
 from google_play_scraper.utils import nested_lookup
 from google_play_scraper.utils.data_processors import unescape_text
@@ -9,7 +9,7 @@ class ElementSpec:
     def __init__(
         self,
         ds_num: Optional[int],
-        data_map: List[int],
+        data_map: List[Union[int, str]],
         post_processor: Callable = None,
         fallback_value: Any = None,
     ):
@@ -26,6 +26,9 @@ class ElementSpec:
                 result = nested_lookup(
                     source["ds:{}".format(self.ds_num)], self.data_map
                 )
+            
+            if result is None:
+                raise ValueError("Extracted content is None")
 
             if self.post_processor is not None:
                 result = self.post_processor(result)
@@ -144,7 +147,11 @@ class ElementSpecs:
         "lastUpdatedOn": ElementSpec(5, [1, 2, 145, 0, 0]),
         "updated": ElementSpec(5, [1, 2, 145, 0, 1, 0]),
         "version": ElementSpec(
-            5, [1, 2, 140, 0, 0, 0], fallback_value="Varies with device"
+            5,
+            [1, 2, -1, "141", 0, 0, 0],
+            fallback_value=ElementSpec(
+                5, [1, 2, 140, 0, 0, 0], fallback_value="Varies with device"
+            ),
         ),
         # "recentChanges": ElementSpec(5, [1, 2, 144, 1, 1], unescape_text),
         # "recentChangesHTML": ElementSpec(5, [1, 2, 144, 1, 1]),

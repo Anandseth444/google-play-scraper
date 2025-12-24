@@ -1,7 +1,7 @@
 import json
 from typing import Any, Dict
 
-from google_play_scraper.constants.element import ElementSpecs
+from google_play_scraper.constants.element import ElementSpecs, ElementSpec
 from google_play_scraper.constants.regex import Regex
 from google_play_scraper.constants.request import Formats
 from google_play_scraper.exceptions import NotFoundError
@@ -39,7 +39,10 @@ def parse_dom(dom: str, app_id: str, url: str) -> Dict[str, Any]:
     for k, spec in ElementSpecs.Detail.items():
         content = spec.extract_content(dataset)
         if content is None:
-            result[k] = spec.fallback_value
+            if isinstance(spec.fallback_value, ElementSpec):
+                result[k] = spec.fallback_value.extract_content(dataset)
+            else:
+                result[k] = spec.fallback_value
         else:
             result[k] = content
 
