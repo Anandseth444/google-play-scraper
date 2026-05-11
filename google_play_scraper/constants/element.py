@@ -202,7 +202,7 @@ class ElementSpecs:
     )
 
     SearchResultOnTop = {
-        "appId": ElementSpec(None, [11, 0, 0]),
+        "appId": ElementSpec(None, [2, 41, 0, 2], lambda url: url.split("id=")[1].split("&")[0]),
         "icon": ElementSpec(None, [2, 95, 0, 3, 2]),
         "screenshots": ElementSpec(
             None,
