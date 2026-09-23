@@ -1,5 +1,7 @@
 import json
-from typing import Any, Dict
+from typing import Any, Dict, Optional
+
+import requests
 
 from google_play_scraper.constants.element import ElementSpecs, ElementSpec
 from google_play_scraper.constants.regex import Regex
@@ -8,14 +10,20 @@ from google_play_scraper.exceptions import NotFoundError
 from google_play_scraper.utils.request import get
 
 
-def app(app_id: str, lang: str = "en", country: str = "us", timeout: int = 60) -> Dict[str, Any]:
+def app(
+    app_id: str,
+    lang: str = "en",
+    country: str = "us",
+    timeout: int = 60,
+    session: Optional[requests.Session] = None,
+) -> Dict[str, Any]:
     url = Formats.Detail.build(app_id=app_id, lang=lang, country=country)
 
     try:
-        dom = get(url, timeout=timeout)
+        dom = get(url, timeout=timeout, session=session)
     except NotFoundError:
         url = Formats.Detail.fallback_build(app_id=app_id, lang=lang)
-        dom = get(url, timeout=timeout)
+        dom = get(url, timeout=timeout, session=session)
     return parse_dom(dom=dom, app_id=app_id, url=url)
 
 

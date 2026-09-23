@@ -4,3 +4,4 @@ from .features.permissions import permissions  # noqa: F401
 from .features.reviews import reviews, reviews_all  # noqa: F401
 from .features.search import search  # noqa: F401
 from .features.developer import developer # noqa: F401
+from .utils.request import new_session  # noqa: F401

@@ -262,5 +262,12 @@ class ElementSpecs:
             lambda collection: [
                 ElementSpec(None, [0, 0]).extract_content(entry) for entry in collection
             ],
-        )
+        ),
+        # Continuation handle for the apps past the first page, alongside "apps"
+        # (named developer ids) or "apps2" (numeric ones). None when there are no more.
+        "token": ElementSpec(
+            3,
+            [0, 1, 0, 22, 1, 3, 1],
+            fallback_value=ElementSpec(3, [0, 1, 0, 21, 1, 3, 1]),
+        ),
     }
