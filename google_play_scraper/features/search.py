@@ -48,9 +48,7 @@ def search(
     except Exception:
         top_result = None
 
-    # A well-formed response always carries the ds:4 block, even for zero-match queries.
-    # A missing block means the response was truncated/malformed, so raise instead of
-    # silently returning no results (which would look like "this domain has no apps").
+    # A well-formed response always has ds:4, even for zero matches; a missing block means a truncated response.
     try:
         results = dataset["ds:4"][0][1]
     except (KeyError, IndexError, TypeError):
@@ -64,7 +62,6 @@ def search(
             success = True
         except Exception:
             pass
-    # ds:4 was present but held no app entries: a genuine zero-result search.
     if not success:
         return []
 
