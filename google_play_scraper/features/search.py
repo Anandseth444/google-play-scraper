@@ -48,11 +48,18 @@ def search(
     except Exception:
         top_result = None
 
+    # Google omits the ds:4 block entirely when a locale has no results, so bail out early
+    # with no matches instead of raising a KeyError.
+    try:
+        results = dataset["ds:4"][0][1]
+    except (KeyError, IndexError, TypeError):
+        return []
+
     success = False
     # different idx for different countries and languages
-    for idx in range(len(dataset["ds:4"][0][1])):
+    for idx in range(len(results)):
         try:
-            dataset = dataset["ds:4"][0][1][idx][22][0]
+            dataset = results[idx][22][0]
             success = True
         except Exception:
             pass
