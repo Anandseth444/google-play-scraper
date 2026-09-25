@@ -7,7 +7,7 @@ import requests
 from google_play_scraper.constants.element import ElementSpecs
 from google_play_scraper.constants.regex import Regex
 from google_play_scraper.constants.request import Formats
-from google_play_scraper.exceptions import NotFoundError
+from google_play_scraper.exceptions import NotFoundError, SearchResultParseError
 from google_play_scraper.utils.request import get
 
 
@@ -48,12 +48,13 @@ def search(
     except Exception:
         top_result = None
 
-    # Google omits the ds:4 block entirely when a locale has no results, so bail out early
-    # with no matches instead of raising a KeyError.
+    # A well-formed response always carries the ds:4 block, even for zero-match queries.
+    # A missing block means the response was truncated/malformed, so raise instead of
+    # silently returning no results (which would look like "this domain has no apps").
     try:
         results = dataset["ds:4"][0][1]
     except (KeyError, IndexError, TypeError):
-        return []
+        raise SearchResultParseError("Search results dataset (ds:4) missing from response.")
 
     success = False
     # different idx for different countries and languages
@@ -63,6 +64,7 @@ def search(
             success = True
         except Exception:
             pass
+    # ds:4 was present but held no app entries: a genuine zero-result search.
     if not success:
         return []
 
